@@ -13,6 +13,10 @@ const commands = [
             required: true
         }
     ]
+  },
+  {
+    name: "pet",
+    description: "Get a random image tagged as: Furry"
   }
 ];
 
