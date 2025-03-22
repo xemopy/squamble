@@ -1,18 +1,19 @@
-import {REST, Routes} from "discord.js";
+require("dotenv").config();
+const {Client, IntentsBitField} = require("discord.js");
 
-const commands = [
-    {
-        name: "silly",
-        description: "Get a little silly."
-    }
-];
+const  client = new Client({
+    intents: [
+        IntentsBitField.Flags.Guilds,
+        IntentsBitField.Flags.GuildMembers,
+        IntentsBitField.Flags.GuildMessages,
+        IntentsBitField.Flags.MessageContent
+    ]
+});
 
-const rest = new REST({version: "10"}).setToken("MTM1MzAyMDkxODcxNjE3MDMyMg.G5aAu0.Snf_W6NcriMA_PxXvdno9098FTQrFHHqwqiTKk");
+client.on("ready", (c) => {
+    console.log(`${c.user.displayName} is ready!`);
+})
 
-try {
-    console.log("Started slash command initialization");
-    await rest.put(Routes.applicationCommands(CLIENT_ID), {body: commands});
-    console.log("Slash commands initialized");
-} catch(error) {
-    console.log(error);
-}
+client.login(process.env.TOKEN);
+
+console.log("goober");

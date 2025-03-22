@@ -1,5 +1,10 @@
 {
+  "name": "The Goober Bot",
+  "version": "1.0.0",
+  "description": "goober bot",
+  "main": "main.js",
   "dependencies": {
-    "discord.js": "^14.18.0"
+    "discord.js": "^14.18.0",
+    "dotenv": "^16.4.7"
   }
 }
