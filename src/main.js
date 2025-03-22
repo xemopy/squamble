@@ -1,7 +1,8 @@
 require("dotenv").config();
+
 const {Client, IntentsBitField} = require("discord.js");
 
-const  client = new Client({
+const client = new Client({
     intents: [
         IntentsBitField.Flags.Guilds,
         IntentsBitField.Flags.GuildMembers,
@@ -14,6 +15,12 @@ client.on("ready", (c) => {
     console.log(`${c.user.displayName} is ready!`);
 })
 
-client.login(process.env.TOKEN);
+client.on("interactionCreate", (interaction) => {
+    if (!interaction.isChatInputCommand()) return;
 
-console.log("goober");
+    if (interaction.commandName === "yap") {
+        interaction.reply(interaction.options.get("value").value);
+    }
+})
+
+client.login(process.env.TOKEN);
