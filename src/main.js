@@ -94,10 +94,6 @@ client.on("ready", (c) => {
 client.on("interactionCreate", async (interaction) => {
     if (!interaction.isChatInputCommand()) return;
 
-    if (interaction.commandName === "yap") {
-        interaction.reply(interaction.options.get("value").value);
-    }
-
     if (interaction.commandName === "addexp") {
         if (await getUserRank(interaction.user.id) === "admin") {
             const user = interaction.options.getUser("user");

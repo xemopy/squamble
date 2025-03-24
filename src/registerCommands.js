@@ -3,18 +3,6 @@ const { REST, Routes, Options, ApplicationCommandOptionType } = require("discord
 
 const commands = [
   {
-    name: "yap",
-    description: "Returns the passed value.",
-    options: [
-        {
-            name: "value",
-            description: "The value passed through",
-            type: ApplicationCommandOptionType.String,
-            required: true
-        }
-    ]
-  },
-  {
     name: "addexp",
     description: "Adds EXP to a user. Adds them to the database if they dont exist yet.",
     options: [
