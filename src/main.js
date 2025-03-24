@@ -25,13 +25,28 @@ async function saveUserData(data) {
     await fs.writeFile(filePath, JSON.stringify(data, null, 2), 'utf-8');
 }
 
+async function getUserRank(UID) {
+    const data = await loadUserData();
+
+    if (!data[UID]) {
+        data[UID] = {
+            exp: 0,
+            rank: "user"
+        };
+        await saveUserData(data);
+        return 0;
+    }
+
+    return data[UID].rank;
+}
+
 async function getUserExp(UID) {
     const data = await loadUserData();
 
     if (!data[UID]) {
         data[UID] = {
             exp: 0,
-            otherinfo: "new user"
+            rank: "user"
         };
         await saveUserData(data);
         return 0;
@@ -47,7 +62,7 @@ async function setUserExp(UID, exp) {
     if (!data[UID]) {
         data[UID] = {
             exp: exp,
-            otherinfo: "new user"
+            rank: "user"
         };
     } else {
         data[UID].exp = exp;
@@ -63,27 +78,13 @@ async function addUserExp(UID, amount) {
     if (!data[UID]) {
         data[UID] = {
             exp: amount,
-            otherinfo: "new user"
+            rank: "user"
         };
     } else {
         data[UID].exp += amount;
     }
 
     await saveUserData(data);
-}
-
-
-async function getImage(query) {
-   // const accessKey = process.env.UNSPLASHKEY;
-   // const res = await fetch(`https://api.unsplash.com/search/photos?query=${query}&per_page=30&client_id=${accessKey}`);
-   // const data = await res.json();
-   //
-   // if (data.results.length > 0) {
-   //     const randomImage = data.results[Math.floor(Math.random() * data.results.length)];
-   //     return randomImage.urls.regular;
-   // }
-
-    return "command is not supported anymore lol";
 }
 
 client.on("ready", (c) => {
@@ -97,10 +98,16 @@ client.on("interactionCreate", async (interaction) => {
         interaction.reply(interaction.options.get("value").value);
     }
 
-    if (interaction.commandName === "pet") {
-        const imageUrl = await getImage("furry");
-        interaction.reply(imageUrl);
+    if (interaction.commandName === "addexp") {
+        if (await getUserRank(interaction.user.id) === "admin") {
+            const user = interaction.options.getUser("user");
+            const amount = interaction.options.getNumber("amount");
+            await addUserExp(user.id, amount);
+            console.log(user.id);
+            interaction.reply(`Added ${amount} EXP to ${user.tag}`);
+        }
     }
+    
 });
 
 

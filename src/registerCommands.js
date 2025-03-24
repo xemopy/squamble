@@ -15,10 +15,6 @@ const commands = [
     ]
   },
   {
-    name: "pet",
-    description: "Get a random persons dog or cat. (not supported rn)"
-  },
-  {
     name: "addexp",
     description: "Adds EXP to a user. Adds them to the database if they dont exist yet.",
     options: [
