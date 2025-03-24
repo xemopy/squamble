@@ -40,7 +40,7 @@ async function getUserRank(UID) {
     return data[UID].rank;
 }
 
-async function getUserExp(UID) {
+async function getUserCreds(UID) {
     const data = await loadUserData();
 
     if (!data[UID]) {
@@ -55,7 +55,7 @@ async function getUserExp(UID) {
     return data[UID].exp;
 }
 
-async function setUserExp(UID, exp) {
+async function setUserCreds(UID, exp) {
     const data = await loadUserData();
 
     // Always create user if missing
@@ -71,7 +71,7 @@ async function setUserExp(UID, exp) {
     await saveUserData(data);
 }
 
-async function addUserExp(UID, amount) {
+async function addUserCreds(UID, amount) {
     const data = await loadUserData();
 
     // Always create user if missing
@@ -94,13 +94,13 @@ client.on("ready", (c) => {
 client.on("interactionCreate", async (interaction) => {
     if (!interaction.isChatInputCommand()) return;
 
-    if (interaction.commandName === "addexp") {
+    if (interaction.commandName === "addcreds") {
         if (await getUserRank(interaction.user.id) === "admin") {
             const user = interaction.options.getUser("user");
             const amount = interaction.options.getNumber("amount");
-            await addUserExp(user.id, amount);
+            await addUserCreds(user.id, amount);
             console.log(user.id);
-            interaction.reply(`Added ${amount} EXP to ${user.tag}`);
+            interaction.reply(`Added ${amount} CREDS to ${user.tag}`);
         }
     }
     

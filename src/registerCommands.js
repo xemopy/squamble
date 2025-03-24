@@ -3,48 +3,48 @@ const { REST, Routes, Options, ApplicationCommandOptionType } = require("discord
 
 const commands = [
   {
-    name: "addexp",
-    description: "Adds EXP to a user. Adds them to the database if they dont exist yet.",
+    name: "addcreds",
+    description: "Adds CREDS to a user. Adds them to the database if they dont exist yet.",
     options: [
       {
         name: "amount",
-        description: "How much EXP to add.",
+        description: "How much CREDS to add.",
         type: ApplicationCommandOptionType.Number,
         required: true
       },
       {
         name: "user",
-        description: "Who do you want to give the EXP.",
+        description: "Who do you want to give the CREDS.",
         type: ApplicationCommandOptionType.User,
         required: true
       }
     ]
   },
   {
-    name: "setexp",
-    description: "Sets a users EXP to a specific value. Adds them to the database if they dont exist yet.",
+    name: "setcreds",
+    description: "Sets a users CREDS to a specific value. Adds them to the database if they dont exist yet.",
     options: [
       {
         name: "amount",
-        description: "What do you want to set the EXP to.",
+        description: "What do you want to set the CREDS to.",
         type: ApplicationCommandOptionType.Number,
         required: true
       },
       {
         name: "user",
-        description: "Who's EXP do you want to change.",
+        description: "Who's CREDS do you want to change.",
         type: ApplicationCommandOptionType.User,
         required: true
       }
     ]
   },
   {
-    name: "getexp",
-    description: "Gives you the EXP of a specific person.",
+    name: "getcreds",
+    description: "Gives you the CREDS of a specific person.",
     options: [
       {
         name: "user",
-        description: "Who's EXP do you want.",
+        description: "Who's CREDS do you want.",
         type: ApplicationCommandOptionType.User,
         required: true
       }
