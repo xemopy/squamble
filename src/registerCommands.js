@@ -39,6 +39,24 @@ const commands = [
     ]
   },
   {
+    name: "setrank",
+    description: "Sets a users RANK to a specific value. Adds them to the database if they dont exist yet.",
+    options: [
+      {
+        name: "rank",
+        description: "What do you want to set the RANK to.",
+        type: ApplicationCommandOptionType.String,
+        required: true
+      },
+      {
+        name: "user",
+        description: "Who's CREDS do you want to change.",
+        type: ApplicationCommandOptionType.User,
+        required: true
+      }
+    ]
+  },
+  {
     name: "getcreds",
     description: "Gives you the CREDS of a specific person.",
     options: [

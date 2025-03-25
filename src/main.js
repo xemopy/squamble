@@ -55,6 +55,22 @@ async function getUserCreds(UID) {
     return data[UID].exp;
 }
 
+async function setUserRank(UID, rank) {
+    const data = await loadUserData();
+
+    // Always create user if missing
+    if (!data[UID]) {
+        data[UID] = {
+            exp: 0,
+            rank: rank
+        };
+    } else {
+        data[UID].rank = rank;
+    }
+
+    await saveUserData(data);
+}
+
 async function setUserCreds(UID, exp) {
     const data = await loadUserData();
 
@@ -95,7 +111,7 @@ client.on("interactionCreate", async (interaction) => {
     if (!interaction.isChatInputCommand()) return;
 
     if (interaction.commandName === "addcreds") {
-        if (await getUserRank(interaction.user.id) === "admin") {
+        if (await getUserRank(interaction.user.id) === "admin" || await getUserRank(interaction.user.id) === "owner") {
             const user = interaction.options.getUser("user");
             const amount = interaction.options.getNumber("amount");
             await addUserCreds(user.id, amount);
@@ -103,8 +119,36 @@ client.on("interactionCreate", async (interaction) => {
             interaction.reply(`Added ${amount} CREDS to ${user.tag}`);
         }
     }
-    
+    if (interaction.commandName === "setcreds") {
+        if (await getUserRank(interaction.user.id) === "admin" || await getUserRank(interaction.user.id) === "owner") {
+            const user = interaction.options.getUser("user");
+            const amount = interaction.options.getNumber("amount");
+            await setUserCreds(user.id, amount);
+            console.log(user.id);
+            interaction.reply(`Set ${user.tag}s CREDS to ${amount}`);
+        }
+    }
+    if (interaction.commandName === "getcreds") {
+        const user = interaction.options.getUser("user");
+        let userCreds = await getUserCreds(user.id);
+        console.log(user.id);
+        interaction.reply(`${user.tag} has ${userCreds} CREDS`);
+    }
+    if (interaction.commandName === "setrank") {
+        if (await getUserRank(interaction.user.id) === "owner") {
+            const user = interaction.options.getUser("user");
+            const rank = interaction.options.getNumber("rank");
+            await setUserRank(user.id, rank);
+            console.log(user.id);
+            interaction.reply(`Set ${user.tag}s RANK to ${rank}`);
+        }
+    }
 });
 
+client.on("messageCreate", async (message) => {
+    if (message.author.bot) return;
+    if (await getUserRank(message.user.id) === "blacklist")
+    await addUserCreds(message.author.id, 1);
+});
 
 client.login(process.env.TOKEN);
