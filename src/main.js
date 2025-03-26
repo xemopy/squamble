@@ -125,6 +125,8 @@ client.on("interactionCreate", async (interaction) => {
             await addUserCreds(user.id, amount);
             console.log(user.id);
             interaction.reply(`Added ${amount} CREDS to ${user.tag}`);
+        } else {
+            interaction.reply("You do not have permission to run this command")
         }
     }
     if (interaction.commandName === "setcreds") {
@@ -134,6 +136,8 @@ client.on("interactionCreate", async (interaction) => {
             await setUserCreds(user.id, amount);
             console.log(user.id);
             interaction.reply(`Set ${user.tag}s CREDS to ${amount}`);
+        } else {
+            interaction.reply("You do not have permission to run this command")
         }
     }
     if (interaction.commandName === "getcreds") {
@@ -145,10 +149,12 @@ client.on("interactionCreate", async (interaction) => {
     if (interaction.commandName === "setrank") {
         if (await getUserRank(interaction.user.id) === "owner") {
             const user = interaction.options.getUser("user");
-            const rank = interaction.options.getNumber("rank");
+            const rank = interaction.options.getString("rank");
             await setUserRank(user.id, rank);
             console.log(user.id);
             interaction.reply(`Set ${user.tag}s RANK to ${rank}`);
+        } else {
+            interaction.reply("You do not have permission to run this command")
         }
     }
     if (interaction.commandName === "bet") {
