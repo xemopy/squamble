@@ -196,16 +196,24 @@ client.on("interactionCreate", async (interaction) => {
         }
     }
     if (interaction.commandName === "bet") {
-        if (await getUserCreds(interaction.user.id) < await interaction.options.getNumber("bet")) {interaction.reply("You dont have the CREDS to make that bet.");}
+        const betAmount = interaction.options.getNumber("bet");
+    
+        if (await getUserCreds(interaction.user.id) < betAmount) {
+            await interaction.reply("You don't have the CREDS to make that bet.");
+            return;
+        }
+    
         if (Math.random() >= 0.75) {
-            addUserCreds(interaction.user.id, interaction.options.getNumber("bet"));
-            interaction.reply("You doubled your bet, NICE!");
+            await addUserCreds(interaction.user.id, betAmount);
+            await interaction.reply("You doubled your bet, NICE!");
         } else {
-            addUserCreds(interaction.user.id, -interaction.options.getNumber("bet"));
-            interaction.reply("You lost your bet (womp womp.)");
+            await addUserCreds(interaction.user.id, -betAmount);
+            await interaction.reply("You lost your bet (womp womp.)");
         }
     }
+    
     if (interaction.commandName === "steal") {
+        if (interaction.user.id === await interaction.options.getUser("who").id) {interaction.reply("You cant steal from yourself.. dumbass"); return;}
         if (await getUserCreds(interaction.user.id) >= 10) {
             if (await getUserCreds(await interaction.options.getUser("who").id) >= 15) {
                 if (Math.random() >= 0.25) {
