@@ -1,6 +1,6 @@
 require("dotenv").config();
 
-const {Client, IntentsBitField, EmbedBuilder, ActivityType} = require("discord.js");
+const {Client, IntentsBitField, EmbedBuilder, ActivityType, ReactionType} = require("discord.js");
 
 const helpEmbed = new EmbedBuilder()
     .setTitle("Squamble Command List")
@@ -160,11 +160,30 @@ client.on("interactionCreate", async (interaction) => {
             interaction.reply("You lost your bet (womp womp.)");
         }
     }
+    if (interaction.commandName === "steal") {
+        if (await getUserCreds(interaction.user.id) >= 10) {
+            if (await getUserCreds(await interaction.options.getUser("who").id) >= 15) {
+                if (Math.random() >= 0.25) {
+                    addUserCreds(interaction.user.id, 5);
+                    addUserCreds(await interaction.options.getUser("who").id, -15);
+                    interaction.reply(`You took 15 CREDS from ${await interaction.options.getUser("who")}`)
+                } else {
+                    interaction.reply("You got caught! Your bail was 30 CREDS.")
+                    addUserCreds(interaction.user.id, -40)
+                }
+            } else {
+                interaction.reply("They didnt have enough CREDS, you lost your preparation costs.");
+                addUserCreds(interaction.user.id, -10)
+            }
+        } else {
+            interaction.reply("You dont have enough CREDS to prepare.");
+        }
+    }
 });
 
 client.on("messageCreate", async (message) => {
-    if (message.author.bot) return;
-    if (await getUserRank(message.user.id) === "blacklist")
+    if (message.author.bot) {return;}
+    if (await getUserRank(message.author.id) === "blacklist") {return;}
     await addUserCreds(message.author.id, 1);
 });
 

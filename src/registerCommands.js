@@ -80,6 +80,18 @@ const commands = [
       }
     ]
   },
+  {
+    name: "steal",
+    description: "Costs 10 CREDS for preparation. Lets you steal CREDS from another member.",
+    options: [
+      {
+        name: "who",
+        description: "Whose CREDS do you want to steal",
+        type: ApplicationCommandOptionType.User,
+        required: true
+      }
+    ]
+  },
 ];
 
 const rest = new REST({ version: "10" }).setToken(process.env.TOKEN);
