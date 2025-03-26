@@ -1,6 +1,13 @@
 require("dotenv").config();
 
-const {Client, IntentsBitField} = require("discord.js");
+const {Client, IntentsBitField, EmbedBuilder, ActivityType} = require("discord.js");
+
+const helpEmbed = new EmbedBuilder()
+    .setTitle("Squamble Command List")
+    .addFields(
+        { name: "getcreds", value: "getcreds [user]"},
+        { name: "info", value: "How many CREDS does [user] have?"}
+    )
 
 const client = new Client({
     intents: [
@@ -105,6 +112,7 @@ async function addUserCreds(UID, amount) {
 
 client.on("ready", (c) => {
     console.log(`${c.user.displayName} is ready!`);
+    client.user.setActivity("Just Squamblin' around", {type: ActivityType.Custom});
 })
 
 client.on("interactionCreate", async (interaction) => {
@@ -141,6 +149,15 @@ client.on("interactionCreate", async (interaction) => {
             await setUserRank(user.id, rank);
             console.log(user.id);
             interaction.reply(`Set ${user.tag}s RANK to ${rank}`);
+        }
+    }
+    if (interaction.commandName === "bet") {
+        if (Math.random() >= 0.75) {
+            addUserCreds(interaction.user.id, interaction.options.getNumber("bet"));
+            interaction.reply("You doubled your bet, NICE!");
+        } else {
+            addUserCreds(interaction.user.id, -interaction.options.getNumber("bet"));
+            interaction.reply("You lost your bet (womp womp.)");
         }
     }
 });

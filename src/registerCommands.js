@@ -68,6 +68,18 @@ const commands = [
       }
     ]
   },
+  {
+    name: "bet",
+    description: "Gives you a 25% chance to DOUBLE your bet but a 75% chance to lose your bet.",
+    options: [
+      {
+        name: "bet",
+        description: "How much you want to bet?",
+        type: ApplicationCommandOptionType.Number,
+        required: true
+      }
+    ]
+  },
 ];
 
 const rest = new REST({ version: "10" }).setToken(process.env.TOKEN);
@@ -76,7 +88,8 @@ const rest = new REST({ version: "10" }).setToken(process.env.TOKEN);
   try {
     console.log("slash commands setting up");
     await rest.put(
-      Routes.applicationGuildCommands(process.env.BOTID, process.env.GUILDID), { body: commands });
+      Routes.applicationCommands(process.env.BOTID), { body: commands }
+    );    
     for (let i = 0; i < commands.length; i++) {
         console.log(commands[i].name);
         console.log(commands[i].description);
