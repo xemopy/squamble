@@ -32,6 +32,41 @@ async function saveUserData(data) {
     await fs.writeFile(filePath, JSON.stringify(data, null, 2), 'utf-8');
 }
 
+async function setUserCooldown(UID, update) {
+    const data = await loadUserData();
+
+    // Always create user if missing
+    if (!data[UID]) {
+        data[UID] = {
+            exp: 0,
+            rank: "user",
+            bonus: 0,
+            cooldown: update
+        };
+    } else {
+        data[UID].cooldown = update;
+    }
+
+    await saveUserData(data);
+}
+
+async function getUserCooldown(UID) {
+    const data = await loadUserData();
+
+    if (!data[UID]) {
+        data[UID] = {
+            exp: 0,
+            rank: "user",
+            bonus: 0,
+            cooldown: false
+        };
+        await saveUserData(data);
+        return false;
+    }
+
+    return data[UID].cooldown;
+}
+
 async function getUserRank(UID) {
     const data = await loadUserData();
 
@@ -39,7 +74,8 @@ async function getUserRank(UID) {
         data[UID] = {
             exp: 0,
             rank: "user",
-            bonus: 0
+            bonus: 0,
+            cooldown: false
         };
         await saveUserData(data);
         return 0;
@@ -55,7 +91,8 @@ async function getUserCreds(UID) {
         data[UID] = {
             exp: 0,
             rank: "user",
-            bonus: 0
+            bonus: 0,
+            cooldown: false
         };
         await saveUserData(data);
         return 0;
@@ -71,7 +108,8 @@ async function getUserBonus(UID) {
         data[UID] = {
             exp: 0,
             rank: "user",
-            bonus: 0
+            bonus: 0,
+            cooldown: false
         };
         await saveUserData(data);
         return 0;
@@ -88,7 +126,8 @@ async function setUserRank(UID, rank) {
         data[UID] = {
             exp: 0,
             rank: rank,
-            bonus: 0
+            bonus: 0,
+            cooldown: false
         };
     } else {
         data[UID].rank = rank;
@@ -105,7 +144,8 @@ async function setUserCreds(UID, exp) {
         data[UID] = {
             exp: exp,
             rank: "user",
-            bonus: 0
+            bonus: 0,
+            cooldown: false
         };
     } else {
         data[UID].exp = exp;
@@ -122,7 +162,8 @@ async function addUserCreds(UID, amount) {
         data[UID] = {
             exp: amount,
             rank: "user",
-            bonus: 0
+            bonus: 0,
+            cooldown: false
         };
     } else {
         data[UID].exp += amount;
@@ -139,7 +180,8 @@ async function addUserBonus(UID, amount) {
         data[UID] = {
             exp: amount,
             rank: "user",
-            bonus: 0
+            bonus: 0,
+            cooldown: false
         };
     } else {
         data[UID].bonus += amount;
@@ -244,7 +286,14 @@ client.on("interactionCreate", async (interaction) => {
 client.on("messageCreate", async (message) => {
     if (message.author.bot) {return;}
     if (await getUserRank(message.author.id) === "blacklist") {return;}
+    if (await getUserCooldown(message.author.id) === true) { console.log("was on cooldown"); return;}
     await addUserCreds(message.author.id, 1 + await getUserBonus(message.author.id));
+    setUserCooldown(message.author.id, true)
+    setTimeout(
+        function() {
+            setUserCooldown(message.author.id, false)
+        }, 3000
+    )
 });
 
 client.login(process.env.TOKEN);
