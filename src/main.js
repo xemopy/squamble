@@ -38,7 +38,8 @@ async function getUserRank(UID) {
     if (!data[UID]) {
         data[UID] = {
             exp: 0,
-            rank: "user"
+            rank: "user",
+            bonus: 0
         };
         await saveUserData(data);
         return 0;
@@ -53,13 +54,30 @@ async function getUserCreds(UID) {
     if (!data[UID]) {
         data[UID] = {
             exp: 0,
-            rank: "user"
+            rank: "user",
+            bonus: 0
         };
         await saveUserData(data);
         return 0;
     }
 
     return data[UID].exp;
+}
+
+async function getUserBonus(UID) {
+    const data = await loadUserData();
+
+    if (!data[UID]) {
+        data[UID] = {
+            exp: 0,
+            rank: "user",
+            bonus: 0
+        };
+        await saveUserData(data);
+        return 0;
+    }
+
+    return data[UID].bonus;
 }
 
 async function setUserRank(UID, rank) {
@@ -69,7 +87,8 @@ async function setUserRank(UID, rank) {
     if (!data[UID]) {
         data[UID] = {
             exp: 0,
-            rank: rank
+            rank: rank,
+            bonus: 0
         };
     } else {
         data[UID].rank = rank;
@@ -85,7 +104,8 @@ async function setUserCreds(UID, exp) {
     if (!data[UID]) {
         data[UID] = {
             exp: exp,
-            rank: "user"
+            rank: "user",
+            bonus: 0
         };
     } else {
         data[UID].exp = exp;
@@ -101,10 +121,28 @@ async function addUserCreds(UID, amount) {
     if (!data[UID]) {
         data[UID] = {
             exp: amount,
-            rank: "user"
+            rank: "user",
+            bonus: 0
         };
     } else {
         data[UID].exp += amount;
+    }
+
+    await saveUserData(data);
+}
+
+async function addUserBonus(UID, amount) {
+    const data = await loadUserData();
+
+    // Always create user if missing
+    if (!data[UID]) {
+        data[UID] = {
+            exp: amount,
+            rank: "user",
+            bonus: 0
+        };
+    } else {
+        data[UID].bonus += amount;
     }
 
     await saveUserData(data);
@@ -158,6 +196,7 @@ client.on("interactionCreate", async (interaction) => {
         }
     }
     if (interaction.commandName === "bet") {
+        if (await getUserCreds(interaction.user.id) < await interaction.options.getNumber("bet")) {interaction.reply("You dont have the CREDS to make that bet.");}
         if (Math.random() >= 0.75) {
             addUserCreds(interaction.user.id, interaction.options.getNumber("bet"));
             interaction.reply("You doubled your bet, NICE!");
@@ -185,12 +224,19 @@ client.on("interactionCreate", async (interaction) => {
             interaction.reply("You dont have enough CREDS to prepare.");
         }
     }
+    if (interaction.commandName === "makefarm") {
+        if (await getUserCreds(interaction.user.id) >= 5000) {
+            addUserBonus(interaction.user.id, 1);
+            addUserCreds(interaction.user.id, -5000)
+            interaction.reply("You built a farm. Your CRED bonus has been increased by 1.")
+        }
+    }
 });
 
 client.on("messageCreate", async (message) => {
     if (message.author.bot) {return;}
     if (await getUserRank(message.author.id) === "blacklist") {return;}
-    await addUserCreds(message.author.id, 1);
+    await addUserCreds(message.author.id, 1 + await getUserBonus(message.author.id));
 });
 
 client.login(process.env.TOKEN);

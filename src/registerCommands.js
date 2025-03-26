@@ -92,6 +92,10 @@ const commands = [
       }
     ]
   },
+  {
+    name: "makefarm",
+    description: "For 5000 CREDS you can increase your CREDBONUS by 1",
+  },
 ];
 
 const rest = new REST({ version: "10" }).setToken(process.env.TOKEN);
